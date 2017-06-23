@@ -1,4 +1,4 @@
-## RDS Snanpshot copier
+## RDS Snapshot copier
 
 This utility allows copying snapshots of AWS RDS instances.
 
@@ -8,6 +8,10 @@ This utility allows copying snapshots of AWS RDS instances.
 - Retention management of copied snapshot
 - Automatically detects most recent snapshot
 - Automatically generates target snapshot name based on the source ID
+
+**Install**
+
+    go get -v -u  github.com/bringg/rds_snapshot_copier
 
 **Usage**
 
