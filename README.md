@@ -13,6 +13,10 @@ This utility allows copying snapshots of AWS RDS instances.
 
     go get -v -u  github.com/bringg/rds_snapshot_copier
 
+**With Docker**
+
+    docker run --rm bringg/rds-snapshot-copier
+
 **Usage**
 
     Usage of rds_snapshot_copier:

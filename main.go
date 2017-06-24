@@ -98,7 +98,7 @@ func main() {
 	}
 
 	if *kmsKey != "" {
-		log.Printf("using %s KMS key ID for encryption", *kmsKey)
+		log.Printf("using [%s] KMS key ID for encryption", *kmsKey)
 		input.KmsKeyId = kmsKey
 	}
 
