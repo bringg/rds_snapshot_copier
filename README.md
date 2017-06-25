@@ -33,6 +33,25 @@ This utility allows copying snapshots of AWS RDS instances.
     -timeout int
             Number of minutes to wait for copy operation completion (default 60)
 
+**Required IAM policy**
+
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "rds:DescribeDBSnapshots",
+                "rds:DeleteDBSnapshot",
+                "rds:CopyDBSnapshot"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
+```
+
 
  **License**
 

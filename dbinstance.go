@@ -52,7 +52,7 @@ func (i *DBInstance) GetSnapshots() error {
 	}
 
 	// filter non-available snapshots from the DBSnapshots slice
-	// no allocations used, see: https://github.com/golang/go/wiki/SliceTricks
+	// no allocations used, see: https://github.com/golang/go/wiki/SliceTricks#filtering-without-allocating
 	filtered := output.DBSnapshots[:0]
 	for _, s := range output.DBSnapshots {
 		if *s.Status == "available" {
