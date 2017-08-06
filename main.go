@@ -22,19 +22,20 @@ func newAWSSession(region string) *session.Session {
 	return sess
 }
 
-func copyDBInstance(targetRDS *rds.RDS, input *rds.CopyDBSnapshotInput, timeout time.Duration) error {
+func copyDBInstance(targetRDS *rds.RDS, input *rds.CopyDBSnapshotInput, pTimeout time.Duration) error {
 	output, err := targetRDS.CopyDBSnapshot(input)
 	if err != nil {
 		return err
 	}
 
-	start := time.Now()
 	describeInput := &rds.DescribeDBSnapshotsInput{DBSnapshotIdentifier: output.DBSnapshot.DBSnapshotIdentifier}
+	progressed := time.Now()
+	var progressPct int64
 
 	log.Printf("copying snapshot to %s/%s ...", *input.DestinationRegion, *input.TargetDBSnapshotIdentifier)
 	for range time.Tick(time.Second * 10) {
-		if time.Since(start) >= timeout {
-			return fmt.Errorf("snapshot copy timed out after %s", timeout)
+		if time.Since(progressed) >= pTimeout {
+			return fmt.Errorf("snapshot copy isn't progressing, timed out reached after %s", pTimeout)
 		}
 
 		o, err := targetRDS.DescribeDBSnapshots(describeInput)
@@ -48,7 +49,12 @@ func copyDBInstance(targetRDS *rds.RDS, input *rds.CopyDBSnapshotInput, timeout 
 			break
 		}
 
-		log.Printf("%d%%, still copying... ", *o.DBSnapshots[0].PercentProgress)
+		if *o.DBSnapshots[0].PercentProgress > progressPct {
+			progressed = time.Now()
+		}
+
+		progressPct = *o.DBSnapshots[0].PercentProgress
+		log.Printf("%d%%, still copying... ", progressPct)
 	}
 
 	return nil
@@ -64,7 +70,7 @@ func main() {
 		retention = flag.Int("retention", 30, "After successful copy, remove snapshots older than specified retention days.")
 		sRegion   = flag.String("source-region", "", "Region where the snapshot located.")
 		tRegion   = flag.String("target-region", "", "Region where the snapshot will be copied to. (default same as source-region)")
-		timeout   = flag.Int("timeout", 60, "Number of minutes to wait for copy operation completion")
+		timeout   = flag.Int("progress-timeout", 60, "Timeout in minutes when copy operation isn't progressing")
 	)
 	flag.Parse()
 
