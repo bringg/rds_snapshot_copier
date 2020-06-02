@@ -116,10 +116,7 @@ func main() {
 
 	// delete snapshots on target DB older than specified days
 	log.Printf("looking for old snapshots which match %d retention days...", *retention)
-	oldSnapshots, err := targetDB.GetOldSnapshots(*retention)
-	if err != nil {
-		log.Fatal(err)
-	}
+	oldSnapshots := targetDB.GetOldSnapshots(*retention)
 
 	log.Printf("found %d snapshots to delete", len(oldSnapshots))
 	for _, s := range oldSnapshots {
