@@ -1,39 +1,47 @@
-## RDS Snapshot copier
+# RDS Snapshot copier
 
 This utility allows copying snapshots of AWS RDS instances.
 
-**Features**
+## Features
 
 - Copy snapshots between AWS regions
 - Retention management of copied snapshot
 - Automatically detects most recent snapshot
 - Automatically generates target snapshot name based on the source ID
 
-**Install**
+## Install
 
-    go get -v -u  github.com/bringg/rds_snapshot_copier
+```shell
+go get -v -u github.com/bringg/rds_snapshot_copier
+```
 
-**With Docker**
+## With Docker
 
-    docker run --rm bringg/rds-snapshot-copier
+```shell
+docker run --rm bringg/rds-snapshot-copier
+```
 
-**Usage**
+## Usage
 
-    Usage of rds_snapshot_copier:
-      -db-name string
-              Source DB instance name.
-      -kms-key-id string
-              KMS key ID or ARN in target region, when specified the snapshot copy will be encrypted.
-      -progress-timeout int
-              Timeout in minutes when copy operation isn't progressing (default 60)
-      -retention int
-              After successful copy, remove snapshots older than specified retention days. (default 30)
-      -source-region string
-              Region where the snapshot located.
-      -target-region string
-              Region where the snapshot will be copied to. (default same as source-region)
+```plain
+Usage of rds_snapshot_copier:
+    -copy-tags
+            Copy all tags from the source snapshot to the target snapshot. (default true)
+    -db-name string
+            Source DB instance name.
+    -kms-key-id string
+            KMS key ID or ARN in target region, when specified the snapshot copy will be encrypted.
+    -progress-timeout int
+            Timeout in minutes when copy operation isn't progressing. (default 60)
+    -retention int
+            After successful copy, remove snapshots older than specified retention days. (default 30)
+    -source-region string
+            Region where the snapshot located.
+    -target-region string
+            Region where the snapshot will be copied to. (default same as source-region)
+```
 
-**Required IAM policy**
+## Required IAM policy
 
 ```json
 {
@@ -52,7 +60,6 @@ This utility allows copying snapshots of AWS RDS instances.
 }
 ```
 
-
- **License**
+## License
 
  Licensed under the MIT License. See the LICENSE file for details.

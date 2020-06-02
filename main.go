@@ -65,12 +65,13 @@ func main() {
 	log.SetFlags(log.Lshortfile)
 
 	var (
+		copyTags  = flag.Bool("copy-tags", true, "Copy all tags from the source snapshot to the target snapshot.")
 		dbName    = flag.String("db-name", "", "Source DB instance name.")
 		kmsKey    = flag.String("kms-key-id", "", "KMS key ID or ARN in target region, when specified the snapshot copy will be encrypted.")
 		retention = flag.Int("retention", 30, "After successful copy, remove snapshots older than specified retention days.")
 		sRegion   = flag.String("source-region", "", "Region where the snapshot located.")
+		timeout   = flag.Int("progress-timeout", 60, "Timeout in minutes when copy operation isn't progressing.")
 		tRegion   = flag.String("target-region", "", "Region where the snapshot will be copied to. (default same as source-region)")
-		timeout   = flag.Int("progress-timeout", 60, "Timeout in minutes when copy operation isn't progressing")
 	)
 	flag.Parse()
 
@@ -98,6 +99,7 @@ func main() {
 	targetDB := MustDBInstance(NewDBInstance(*dbName, targetRDS))
 	targetDBName := aws.String(fmt.Sprintf("%s-%s", *dbName, lastSnapshot.SnapshotCreateTime.Format("2006-01-02-15-04")))
 	input := &rds.CopyDBSnapshotInput{
+		CopyTags:                   copyTags,
 		SourceRegion:               sRegion,
 		SourceDBSnapshotIdentifier: lastSnapshot.DBSnapshotArn,
 		TargetDBSnapshotIdentifier: targetDBName,
@@ -114,10 +116,7 @@ func main() {
 
 	// delete snapshots on target DB older than specified days
 	log.Printf("looking for old snapshots which match %d retention days...", *retention)
-	oldSnapshots, err := targetDB.GetOldSnapshots(*retention)
-	if err != nil {
-		log.Fatal(err)
-	}
+	oldSnapshots := targetDB.GetOldSnapshots(*retention)
 
 	log.Printf("found %d snapshots to delete", len(oldSnapshots))
 	for _, s := range oldSnapshots {

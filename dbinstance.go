@@ -62,7 +62,7 @@ func (i *DBInstance) GetSnapshots() error {
 
 	// sort by snapshot creation time
 	sort.Slice(filtered, func(i, j int) bool {
-		return (*filtered[i].SnapshotCreateTime).Before(*filtered[j].SnapshotCreateTime)
+		return filtered[i].SnapshotCreateTime.Before(*filtered[j].SnapshotCreateTime)
 	})
 
 	i.snapshots = filtered
@@ -82,7 +82,7 @@ func (i DBInstance) GetLastSnapshot() (*rds.DBSnapshot, error) {
 
 // GetOldSnapshots returns a slice of pointers to all snapshots which are older
 // than specified "days"
-func (i DBInstance) GetOldSnapshots(days int) ([]*rds.DBSnapshot, error) {
+func (i DBInstance) GetOldSnapshots(days int) []*rds.DBSnapshot {
 	var oldSnapshots []*rds.DBSnapshot
 	oldDate := time.Now().AddDate(0, 0, -days)
 
@@ -100,5 +100,5 @@ func (i DBInstance) GetOldSnapshots(days int) ([]*rds.DBSnapshot, error) {
 		oldSnapshots = append(oldSnapshots, s)
 	}
 
-	return oldSnapshots, nil
+	return oldSnapshots
 }
