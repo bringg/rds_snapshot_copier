@@ -1,5 +1,7 @@
 # RDS Snapshot copier
 
+> **Deprication notice:** this tool is depricated, since AWS provides a built in [capability](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_ReplicateBackups.html) to copy RDS backups.
+
 This utility allows copying snapshots of AWS RDS instances.
 
 ## Features
